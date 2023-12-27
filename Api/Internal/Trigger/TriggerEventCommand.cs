@@ -4,6 +4,7 @@ using Api.Seedwork;
 using CSharpFunctionalExtensions;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Requests;
 using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
@@ -84,18 +85,18 @@ namespace Api.Internal.Trigger
                 {
                     return ResultYm.Success(true);
                 }
-                var googleAuthRequest = new GoogleAuthRequest
+                var googleAuthRequest = new RefreshTokenRequest
                 {
                     GrantType = "refresh_token",
-                    ClientId = "745908154183-lv0n6pf0r3jr98vhugsofe7ivn0otpsk.apps.googleusercontent.com",
-                    ClientSecret = "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",
+                    ClientId = "",
+                    ClientSecret = "",
                     RefreshToken = "",
                     Scope = DriveService.Scope.Drive
                 };
                 string fileId = "1Zdb9LQxNvroq6nEh387guUs0AFdMVpAo";
                 var result = await _googleAuthService.RefreshAccessToken(googleAuthRequest);
                 var downloadWithAccessTokenResult = await _googleDriveService.DriveDownloadFileFromAccessToken(result.Value.AccessToken, fileId);
-                await CreateAttachment(Convert.ToBase64String(downloadWithAccessTokenResult.ToArray()), "AccessToken.xlsx", _directoryPathConfiguration.ProfilePicture);
+                await CreateAttachment(Convert.ToBase64String(downloadWithAccessTokenResult.Value.ToArray()), "AccessToken.xlsx", _directoryPathConfiguration.ProfilePicture);
 
                 //var downloadWithServiceAccountResult = await _googleDriveService.DriveDownloadFileFromServiceAccount(request.GoogleServiceAccountCredential, fileId);
                 //await CreateAttachment(Convert.ToBase64String(downloadWithServiceAccountResult.ToArray()), "ServiceAccount.xlsx", _directoryPathConfiguration.ProfilePicture);
