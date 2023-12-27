@@ -1,0 +1,141 @@
+@coreApiUrl=http://localhost:5000
+
+#TODO
+#@AuthorizationToken=
+#Authorization: Bearer {{AuthorizationToken}}
+
+## Internal Trigger
+
+### Trigger
+POST {{coreApiUrl}}/api/Internal/Trigger
+Content-Type: application/json
+
+{
+    "GoogleServiceAccountCredential": {}
+}
+
+## Internal Google
+
+### Refresh Google Access Token
+POST {{coreApiUrl}}/api/Internal/Google/Refresh
+Content-Type: application/json
+
+{
+    "Credential": {
+        "ClientId": "",
+        "ClientSecret": "",
+        "AccessToken": "",
+        "RefreshToken": ""
+    }
+}
+
+### Download File From Google Drive
+POST {{coreApiUrl}}/api/Internal/Google/File/Download
+Content-Type: application/json
+
+{
+    "FileName": "MyFile.xlsx",
+    "Url": "",
+    "Credential": {
+        "ClientId": "",
+        "ClientSecret": "",
+        "AccessToken": "",
+        "RefreshToken": ""
+    }
+}
+
+## Internal Microsoft
+
+### Refresh Google Access Token
+POST {{coreApiUrl}}/api/Internal/Microsoft/Refresh
+Content-Type: application/json
+
+{
+    "Credential": {
+        "ClientId": "9578c9c1-e1ba-463a-87a2-8edeb49a3172",
+        "ClientSecret": "v5D8Q~Lgpy~yzaCF~eTV18YxODBgAmHGc11uMdtr",
+        "AccessToken": "eyJ0eXAiOiJKV1QiLCJub25jZSI6IldoV0RLQ2xxV2tMbC1ydk1ONVpkOTFKOEo1WHV1aXVLam5QVWdtVkw3N2ciLCJhbGciOiJSUzI1NiIsIng1dCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSIsImtpZCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSJ9.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lOTc4YzkzYy03YmY5LTQ0N2MtYTVhNy1jZWM0OTI5YzExNDgvIiwiaWF0IjoxNjU5Njg1MzY1LCJuYmYiOjE2NTk2ODUzNjUsImV4cCI6MTY1OTY5MDc1NywiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFWUUFxLzhUQUFBQU55T2s3MVlnWld6QTc3U3QwNWFFZSsxR1JuVElycWRjMzVKU2hJcVI4UGJlVFRjSGhoNW94TEY4Y3dhaXJYZlVETlF0dzhrVklVVlFMNXVrWkh5aWFVbVhlYzAyOGNXK0V6VWFWaXVwUUtVPSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwX2Rpc3BsYXluYW1lIjoiU2Vjb25kIiwiYXBwaWQiOiI5NTc4YzljMS1lMWJhLTQ2M2EtODdhMi04ZWRlYjQ5YTMxNzIiLCJhcHBpZGFjciI6IjEiLCJmYW1pbHlfbmFtZSI6IkhldyIsImdpdmVuX25hbWUiOiJKaWEgU2hlbmciLCJpZHR5cCI6InVzZXIiLCJpcGFkZHIiOiIyMDIuMTg2Ljg0LjEyNiIsIm5hbWUiOiJKaWEgU2hlbmcgSGV3Iiwib2lkIjoiYWM5ZDFjODItYmVlYy00NDY4LWJhNjQtMzY5MmMzMTBiOWQyIiwicGxhdGYiOiIzIiwicHVpZCI6IjEwMDMyMDAyMEMxQjUxRDMiLCJyaCI6IjAuQVZVQVBNbDQ2Zmw3ZkVTbHA4N0VrcHdSU0FNQUFBQUFBQUFBd0FBQUFBQUFBQUNJQU8wLiIsInNjcCI6IkZpbGVzLlJlYWQuQWxsIFVzZXIuUmVhZCBwcm9maWxlIG9wZW5pZCBlbWFpbCIsInNpZ25pbl9zdGF0ZSI6WyJrbXNpIl0sInN1YiI6Ilh5b29OR0c4RENlVmxBWEFTZnNuY0I1UVREdU0xak9neFJZd25ELWZZYXMiLCJ0ZW5hbnRfcmVnaW9uX3Njb3BlIjoiQVMiLCJ0aWQiOiJlOTc4YzkzYy03YmY5LTQ0N2MtYTVhNy1jZWM0OTI5YzExNDgiLCJ1bmlxdWVfbmFtZSI6Im55YW5uMTIxMUBscGswLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6Im55YW5uMTIxMUBscGswLm9ubWljcm9zb2Z0LmNvbSIsInV0aSI6IkNQdXdTZEtUSDAtLWx0Nm5jbzBVQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfc3QiOnsic3ViIjoiay04c0pzQkRwTHdsUi1iMHVOZjhSM2I3MTJfRnl2Z2VkN1k0YVhqUFBsdyJ9LCJ4bXNfdGNkdCI6MTY1NjczMTcxN30.reX33RQ92IZEXEWrb6I5qDhQBhtm50G3HKXoENPydfSqlZJgWAg5P8i6RYqeIiPKc_3c89tmlTgIUbx2BqmErtcS1qi3Ru5xVcYqoJAlh-x7OG8dnkqhu7ap9AYy4jDoAONVfRNVin-C0f4dbENfNI_C5seHLNMET9JrYP9p2cvEmtl5Yj4i4Uhmen3HT8HrFkr-g1g3Qw5qgldvxi9OwdM9gvj1ZegG2P6nGl-R-JngVjm714COrS--7hLkwIZB0iTennsbpZJohU7_7rXFkEKiwdEx6yd1d2FvM4Xo-1hvR-bWcARiFWNtamJ_6VCTTZJHDPpwaAV-ue_FJyNw4w",
+        "RefreshToken": "0.AVUAPMl46fl7fESlp87EkpwRSMHJeJW64TpGh6KO3rSaMXKIAO0.AgABAAEAAAD--DLA3VO7QrddgJg7WevrAgDs_wQA9P-iUFwi38rycBuCnapGA5hR0tt_sYBPqBdvkwtjmLahcOAeNth4StcLHCleEAwZmCZyN5ceZCcfCSjBSdUsV4j2gSnKnx0tlBKiTBTjD0NajbVAugeA8ItJBOR9fvdQ5V0D3st_oye9nr2dk6jIgFv3LYyzxpOJfbE3QdHa0GRx2CiJ2LEcaZvv3Uqv7JK3_MWArfuN1g4zocKZ6CQ4qidaMRiLZx-JSWBGI9hjzgBtJjRL19KZFqkctwzSFFK31x7jXX9seLwmPdplCDCMlIcfLP_r_-sU8Le2BbBcdu6hoGkZo1iaNBRnZJ0Kb0zsZy6nGIr92W-PIsDKayQeM1v1xCXabQu7_m4x28ExDZIxDGXKa6hoYKrjngaW0Xjkuf0vjyVe-BwqwMIKSX7Iir1NJanbrJXirPSIETn20s0wP4MdzziKwe8ww7AMDwru4kTmzwI6LlSBAdXniMeuTqj7dQ3VWf-DraQnK0gGnfPdUad2ERGn94yVG1NjhsmJ7f9CfMP0N_0D5nM0QZ-snbe1QjzdCfGGSPjt8lL7_4--Nn5n8nauqXlbNkgVE1xdTZoFaLVGutC4FQPaMiBU_4Cgd8eJIeM1f49p_tKGWXDn99E9RywrvS5YOGOhZmlZ7223dwvt3j9Wd1vnHq8BJhOQQRsKkhiEsWl_m5ulc1Ku2ldnR21vaaTSTe7PFlsBpCOMygUB1YWKwRGOGQmb0adGlCy3Id9VS1j1OlMlIkaSrEBZDbJB8OzQhBH_j-xY6n0XL5EvGoRNIaCl3jmzuy21Pvwbduk6xrD1haR4OwN2kSft0jHra7jI1ydUUqVi5CpCZMgc"
+    }
+}
+
+## Account
+
+### Add Account
+POST {{coreApiUrl}}/api/account
+Content-Type: application/json
+
+{
+    "FullName": "Jason",
+    "Password": "",
+    "Email": "jasonhew1211@gmail.com",
+    "ProfilePictures": [
+        {
+            "attachmentFileName": "TextFile.jpg",
+            "blobType": "image/jpg",
+            "attachmentBase64": "dGVzdA=="
+        }
+    ]
+}
+
+### GET Account Detail
+GET {{coreApiUrl}}/api/account/detail?accountId=dabe81add47e4ac3933e38c4cb1f47f3
+
+### GET All Accounts
+GET {{coreApiUrl}}/api/account?sortBy=&sortOrder=-1&currentPage=1&pageSize=10
+
+### GET Account Page Size
+GET {{coreApiUrl}}/api/account/pageSize?pageSize=1
+
+### Update Account Detail
+PATCH {{coreApiUrl}}/api/account
+Content-Type: application/json
+
+{
+    "AccountId": "dabe81add47e4ac3933e38c4cb1f47f3",
+    "FullName": "Jason",
+    "Email": "jasonhew1211@gmail.com",
+    "ProfilePictures": [
+        {
+            "attachmentFileName": "Test.txt",
+            "blobType": "image/jpg",
+            "attachmentBase64": "dGVzdA=="
+        },
+        {
+            "attachmentId": "aeb7c43ad2f24a2f9dc7f8bc57e13bb4",
+            "name": "aeb7c43ad2f24a2f9dc7f8bc57e13bb4-Test.txt",
+            "blobType": "image/jpg"
+        }
+    ],
+    "ModifiedUTCDateTime": "2021-02-05T16:32:49.421Z"
+}
+
+## Product
+
+### Add Product
+POST {{coreApiUrl}}/api/product
+Content-Type: application/json
+
+{
+    "ProductName": "Razer Huntsman Ultra Mega",
+    "ProductPrice": 1000
+}
+
+### GET Product Detail
+GET {{coreApiUrl}}/api/product/detail?productId=02bb6ec78db3478babe17fa593823c4b
+
+### GET All Products
+GET {{coreApiUrl}}/api/product?sortBy=&sortOrder=-1&currentPage=1&pageSize=10
+
+### GET Product Page Size
+GET {{coreApiUrl}}/api/product/pageSize?pageSize=1
+
+### Update Product Detail
+PATCH {{coreApiUrl}}/api/product
+Content-Type: application/json
+
+{
+    "ProductId": "02bb6ec78db3478babe17fa593823c4b",
+    "ProductName": "Razer Abyssus",
+    "ModifiedUTCDateTime": "2021-01-30T07:52:37.881Z"
+}
