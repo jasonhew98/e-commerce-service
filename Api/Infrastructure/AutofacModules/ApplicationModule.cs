@@ -25,11 +25,11 @@ namespace Api.Infrastructure.AutofacModules
 
         protected override void Load(ContainerBuilder builder)
         {
-            /*builder.RegisterType<CoreMongoDbContext>().As<IMongoContext>().InstancePerLifetimeScope()
+            builder.RegisterType<CoreMongoDbContext>().As<IMongoContext>().InstancePerLifetimeScope()
                 .WithParameter((pi, ctx) => pi.Name == "mongoDbUrl",
                     (p, c) => c.Resolve<IOptions<CoreRepositoryOptions>>().Value.MongoDbUrl)
                 .WithParameter((pi, ctx) => pi.Name == "database",
-                    (p, c) => c.Resolve<IOptions<CoreRepositoryOptions>>().Value.Database);*/
+                    (p, c) => c.Resolve<IOptions<CoreRepositoryOptions>>().Value.Database);
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
 
             Func<ParameterInfo, IComponentContext, bool> parameterSelector = (pi, ctx) => pi.Name == "collectionName";
