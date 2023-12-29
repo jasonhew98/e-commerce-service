@@ -1,4 +1,5 @@
-﻿using Api.Infrastructure.Services;
+﻿using Api.Application.Events;
+using Api.Infrastructure.Services;
 using Api.Seedwork.AesEncryption;
 using Autofac;
 using Autofac.Features.ResolveAnything;

@@ -1,5 +1,8 @@
+using Api.Application.Events;
+using Api.Application.IntegrationEvents;
 using Api.Infrastructure;
 using Api.Infrastructure.AutofacModules;
+using Api.Infrastructure.Extensions;
 using Api.Infrastructure.Services;
 using Api.Seedwork.AesEncryption;
 using Autofac;
@@ -83,6 +86,8 @@ namespace Api
                 var url = serviceProvider.GetService<IOptions<MicrosoftGraphServiceConfigurationOptions>>().Value.ServiceUrl;
                 client.BaseAddress = new Uri(url);
             });
+
+            ConfigureEventBusDependencies(services);
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -111,7 +116,30 @@ namespace Api
             app.UseAuthentication();
             app.UseMvc();
 
+            ConfigureIntegrationEvents(app);
+
             MongoDbConfiguration.RegisterDefault();
+        }
+
+        private void ConfigureEventBusDependencies(IServiceCollection services)
+        {
+            var rabbitMQSection = Configuration.GetSection("RabbitMQ");
+            services.AddRabbitMQEventBus
+            (
+                connectionUrl: rabbitMQSection["ConnectionUrl"],
+                brokerName: "netCoreEventBusBroker",
+                queueName: "netCoreEventBusQueue",
+                timeoutBeforeReconnecting: 15
+            );
+
+            services.AddTransient<ProductAddedIntegrationEventHandler>();
+        }
+
+        private void ConfigureIntegrationEvents(IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IIntegrationEventService>();
+
+            eventBus.Subscribe<ProductAddedIntegrationEvent, ProductAddedIntegrationEventHandler>();
         }
     }
 }

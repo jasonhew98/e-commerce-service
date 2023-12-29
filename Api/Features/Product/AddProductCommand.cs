@@ -1,4 +1,6 @@
-﻿using Api.Seedwork;
+﻿using Api.Application.Events;
+using Api.Application.IntegrationEvents;
+using Api.Seedwork;
 using CSharpFunctionalExtensions;
 using Domain.AggregatesModel.ProductAggregate;
 using FluentValidation;
@@ -40,15 +42,18 @@ namespace Api.Features.Product
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductRepository _productRepository;
+        private readonly IIntegrationEventService _integrationEventService;
 
         public AddProductCommandHandler(
             ILogger<AddProductCommandHandler> logger,
             IUnitOfWork unitOfWork,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IIntegrationEventService integrationEventService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
+            _integrationEventService = integrationEventService;
         }
 
         public async Task<Result<bool, CommandErrorResponse>> Handle(AddProductCommand request, CancellationToken cancellationToken)
@@ -69,6 +74,8 @@ namespace Api.Features.Product
                 _productRepository.Add(product);
 
                 await _unitOfWork.Commit();
+
+                _integrationEventService.Publish(new ProductAddedIntegrationEvent(product.ProductId, product.CreatedBy, product.CreatedByName, product.CreatedUTCDateTime.Value));
 
                 return ResultYm.Success(true);
             }
