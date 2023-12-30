@@ -4,7 +4,7 @@ using Api.Seedwork;
 using Api.Seedwork.AesEncryption;
 using CSharpFunctionalExtensions;
 using Domain;
-using Domain.AggregatesModel.AccountAggregate;
+using Domain.AggregatesModel.UserAggregate;
 using Domain.Model;
 using FluentValidation;
 using Infrastructure.Seedwork;
@@ -17,23 +17,23 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Api.Features.Account
+namespace Api.Features.User
 {
-    public class AddAccountCommand : IRequest<Result<bool, CommandErrorResponse>>
+    public class AddUserCommand : IRequest<Result<bool, CommandErrorResponse>>
     {
-        public string AccountId { get; }
+        public string UserId { get; }
         public string FullName { get; }
         public string Password { get; }
         public string Email { get; }
         public List<AddAttachment> ProfilePictures { get; }
 
-        public AddAccountCommand(
+        public AddUserCommand(
             string fullName,
             string password,
             string email,
             List<AddAttachment> profilePictures = null)
         {
-            AccountId = Guid.NewGuid().ToString("N");
+            UserId = Guid.NewGuid().ToString("N");
             FullName = fullName;
             Password = password;
             Email = email;
@@ -41,9 +41,9 @@ namespace Api.Features.Account
         }
     }
 
-    public class AddAccountCommandValidator : AbstractValidator<AddAccountCommand>
+    public class AddUserCommandValidator : AbstractValidator<AddUserCommand>
     {
-        public AddAccountCommandValidator()
+        public AddUserCommandValidator()
         {
             RuleFor(a => a.FullName).NotEmpty();
             RuleFor(a => a.Password).NotEmpty();
@@ -51,36 +51,36 @@ namespace Api.Features.Account
         }
     }
 
-    public class AddAccountCommandHandler : IRequestHandler<AddAccountCommand, Result<bool, CommandErrorResponse>>
+    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result<bool, CommandErrorResponse>>
     {
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAccountRepository _accountRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IAesSecurity _aes;
         private readonly DirectoryPathConfigurationOptions _directoryPathConfiguration;
 
-        public AddAccountCommandHandler(
-            ILogger<AddAccountCommandHandler> logger,
+        public AddUserCommandHandler(
+            ILogger<AddUserCommandHandler> logger,
             IUnitOfWork unitOfWork,
             IAesSecurity aes,
             IOptions<DirectoryPathConfigurationOptions> directoryPathConfiguration,
-            IAccountRepository accountRepository)
+            IUserRepository userRepository)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _aes = aes;
             _directoryPathConfiguration = directoryPathConfiguration.Value;
-            _accountRepository = accountRepository;
+            _userRepository = userRepository;
         }
 
-        public async Task<Result<bool, CommandErrorResponse>> Handle(AddAccountCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool, CommandErrorResponse>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 List<Attachment> profilePictures = new List<Attachment>();
 
-                var account = new Domain.AggregatesModel.AccountAggregate.Account(
-                    accountId: request.AccountId,
+                var user = new Domain.AggregatesModel.UserAggregate.User(
+                    userId: request.UserId,
                     fullName: request.FullName,
                     password: _aes.Encrypt(request.Password),
                     email: _aes.Encrypt(request.Email),
@@ -108,7 +108,7 @@ namespace Api.Features.Account
                 }
 
                 if (!valid)
-                    return ResultYm.Error<bool>(CommandErrorResponse.BusinessError(BusinessError.FailToCreateAccount__InvalidFileType.Error()));
+                    return ResultYm.Error<bool>(CommandErrorResponse.BusinessError(BusinessError.FailToCreateUser__InvalidFileType.Error()));
 
                 request.ProfilePictures.ForEach(async delegate (AddAttachment attachment)
                 {
@@ -126,7 +126,7 @@ namespace Api.Features.Account
                     await CreateAttachment(attachment.AttachmentBase64, attachmentFileName, _directoryPathConfiguration.ProfilePicture);
                 });
 
-                _accountRepository.Add(account);
+                _userRepository.Add(user);
 
                 await _unitOfWork.Commit();
 
@@ -134,7 +134,7 @@ namespace Api.Features.Account
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unknown error has occured while trying to add new account.");
+                _logger.LogError(ex, "An unknown error has occured while trying to add new user.");
                 return ResultYm.Error<bool>(ex);
             }
         }

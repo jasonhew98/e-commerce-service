@@ -1,4 +1,4 @@
-﻿using Domain.AggregatesModel.AccountAggregate;
+﻿using Domain.AggregatesModel.UserAggregate;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -24,17 +24,17 @@ namespace Api.Infrastructure.Middlewares
             _jwtConfig = jwtConfig.Value;
         }
 
-        public async Task Invoke(HttpContext context, IAccountRepository accountRepository)
+        public async Task Invoke(HttpContext context, IUserRepository userRepository)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (token != null)
-                attachUserToContext(context, accountRepository, token);
+                attachUserToContext(context, userRepository, token);
 
             await _next(context);
         }
 
-        private void attachUserToContext(HttpContext context, IAccountRepository accountRepository, string token)
+        private void attachUserToContext(HttpContext context, IUserRepository userRepository, string token)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Api.Infrastructure.Middlewares
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
 
                 // attach user to context on successful jwt validation
-                context.Items["User"] = accountRepository.GetAccount(accountId: userId);
+                context.Items["User"] = userRepository.GetUser(userId: userId);
             }
             catch
             {

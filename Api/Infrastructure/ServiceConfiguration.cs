@@ -12,7 +12,7 @@
         public string MongoDbUrl { get; set; }
         public string Database { get; set; }
         public string ProductCollectionName { get; set; }
-        public string AccountCollectionName { get; set; }
+        public string UserCollectionName { get; set; }
     }
 
     public class JwtAuthorizationConfigurationOptions

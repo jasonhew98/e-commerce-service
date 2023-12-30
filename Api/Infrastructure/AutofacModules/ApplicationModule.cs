@@ -3,7 +3,7 @@ using Api.Infrastructure.Services;
 using Api.Seedwork.AesEncryption;
 using Autofac;
 using Autofac.Features.ResolveAnything;
-using Domain.AggregatesModel.AccountAggregate;
+using Domain.AggregatesModel.UserAggregate;
 using Domain.AggregatesModel.ProductAggregate;
 using Infrastructure.Repositories;
 using Infrastructure.Seedwork;
@@ -39,9 +39,9 @@ namespace Api.Infrastructure.AutofacModules
                 .WithParameter(parameterSelector,
                     (p, c) => c.Resolve<IOptions<CoreRepositoryOptions>>().Value.ProductCollectionName);
 
-            builder.RegisterType<MongoDbAccountRepository>().As<IAccountRepository>().InstancePerLifetimeScope()
+            builder.RegisterType<MongoDbUserRepository>().As<IUserRepository>().InstancePerLifetimeScope()
                 .WithParameter(parameterSelector,
-                    (p, c) => c.Resolve<IOptions<CoreRepositoryOptions>>().Value.AccountCollectionName);
+                    (p, c) => c.Resolve<IOptions<CoreRepositoryOptions>>().Value.UserCollectionName);
 
             builder.RegisterType<AesSecurity>().As<IAesSecurity>()
                 .InstancePerLifetimeScope();

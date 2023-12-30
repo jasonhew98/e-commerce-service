@@ -33,17 +33,17 @@
             public static DomainError Error() => DomainError.New(Code, Message);
         }
 
-        public static class FailToCreateAccount__InvalidFileType
+        public static class FailToCreateUser__InvalidFileType
         {
             public static string Code = "2001";
-            public static string Message = "Unable to create account. Please upload a valid image file for profile picture.";
+            public static string Message = "Unable to create user. Please upload a valid image file for profile picture.";
             public static DomainError Error() => DomainError.New(Code, Message);
         }
 
-        public static class FailToUpdateAccount__InvalidFileType
+        public static class FailToUpdateUser__InvalidFileType
         {
             public static string Code = "2002";
-            public static string Message = "Unable to update account details. Please upload a valid image file for profile picture.";
+            public static string Message = "Unable to update user details. Please upload a valid image file for profile picture.";
             public static DomainError Error() => DomainError.New(Code, Message);
         }
     }

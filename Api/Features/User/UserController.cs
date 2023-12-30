@@ -6,17 +6,17 @@ using Api.Seedwork;
 using System.Net;
 using Api.Model;
 
-namespace Api.Features.Account
+namespace Api.Features.User
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : Controller
+    public class UserController : Controller
     {
         private readonly ILogger _logger;
         private readonly IMediator _mediator;
 
-        public AccountController(
-            ILogger<AccountController> logger,
+        public UserController(
+            ILogger<UserController> logger,
             IMediator mediator)
         {
             _logger = logger;
@@ -26,21 +26,21 @@ namespace Api.Features.Account
         [HttpPost]
         [Route("")]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.Accepted)]
-        public async Task<IActionResult> AddAccount([FromBody] AddAccountCommand command)
+        public async Task<IActionResult> AddUser([FromBody] AddUserCommand command)
         {
             return this.OkOrError(await _mediator.Send(command));
         }
 
         [HttpGet]
         [Route("")]
-        [ProducesResponseType(typeof(AccountDto[]), (int)HttpStatusCode.Accepted)]
-        public async Task<IActionResult> GetAccounts(
+        [ProducesResponseType(typeof(UserDto[]), (int)HttpStatusCode.Accepted)]
+        public async Task<IActionResult> GetUsers(
             [FromQuery] string sortBy,
             [FromQuery] int sortOrder,
             [FromQuery] int currentPage,
             [FromQuery] int pageSize)
         {
-            var command = new GetAccountsQuery(
+            var command = new GetUsersQuery(
                 sortBy: sortBy,
                 sortOrder: sortOrder,
                 currentPage: currentPage,
@@ -52,10 +52,10 @@ namespace Api.Features.Account
         [HttpGet]
         [Route("pageSize")]
         [ProducesResponseType(typeof(PageSizeDto), (int)HttpStatusCode.Accepted)]
-        public async Task<IActionResult> GetAccountPageSize(
+        public async Task<IActionResult> GetUserPageSize(
             [FromQuery] int pageSize)
         {
-            var command = new GetAccountPageSizeQuery(
+            var command = new GetUserPageSizeQuery(
                 pageSize: pageSize);
 
             return this.OkOrError(await _mediator.Send(command));
@@ -63,20 +63,20 @@ namespace Api.Features.Account
 
         [HttpGet]
         [Route("detail")]
-        [ProducesResponseType(typeof(AccountDetailDto), (int)HttpStatusCode.Accepted)]
-        public async Task<IActionResult> GetAccount(
-            [FromQuery] string accountId)
+        [ProducesResponseType(typeof(UserDetailDto), (int)HttpStatusCode.Accepted)]
+        public async Task<IActionResult> GetUser(
+            [FromQuery] string userId)
         {
-            var command = new GetAccountQuery(
-                accountId: accountId);
+            var command = new GetUserQuery(
+                userId: userId);
 
             return this.OkOrError(await _mediator.Send(command));
         }
 
         [HttpPatch]
-        [ProducesResponseType(typeof(UpdatedAccountDto), (int)HttpStatusCode.Accepted)]
-        public async Task<IActionResult> UpdateAccount(
-            [FromBody] UpdateAccountCommand command)
+        [ProducesResponseType(typeof(UpdatedUserDto), (int)HttpStatusCode.Accepted)]
+        public async Task<IActionResult> UpdateUser(
+            [FromBody] UpdateUserCommand command)
         {
             return this.OkOrError(await _mediator.Send(command));
         }

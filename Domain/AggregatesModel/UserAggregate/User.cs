@@ -3,21 +3,21 @@ using Domain.Seedwork;
 using System;
 using System.Collections.Generic;
 
-namespace Domain.AggregatesModel.AccountAggregate
+namespace Domain.AggregatesModel.UserAggregate
 {
-    public class Account : AuditableEntity, IAggregateRoot
+    public class User : AuditableEntity, IAggregateRoot
     {
-        public string AccountId { get; private set; }
+        public string UserId { get; private set; }
         public string FullName { get; private set; }
         public string Password { get; private set; }
         public string Email { get; private set; }
         public List<Attachment> ProfilePictures { get; private set; }
 
-        public Account(
+        public User(
             string fullName,
             string email,
             List<Attachment> profilePictures = null,
-            string accountId = null,
+            string userId = null,
             string password = null,
             string createdBy = null,
             string createdByName = null,
@@ -33,18 +33,18 @@ namespace Domain.AggregatesModel.AccountAggregate
                   modifiedByName: modifiedByName,
                   modifiedUTCDateTime: modifiedUTCDateTime)
         {
-            AccountId = accountId;
+            UserId = userId;
             FullName = fullName;
             Password = password;
             Email = email;
             ProfilePictures = profilePictures;
         }
 
-        public void UpdateAccountDetails(Account account)
+        public void UpdateUserDetails(User user)
         {
-            FullName = account.FullName;
-            Email = account.Email;
-            ProfilePictures = account.ProfilePictures;
+            FullName = user.FullName;
+            Email = user.Email;
+            ProfilePictures = user.ProfilePictures;
         }
     }
 }

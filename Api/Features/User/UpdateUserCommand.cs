@@ -4,7 +4,7 @@ using Api.Seedwork;
 using Api.Seedwork.AesEncryption;
 using CSharpFunctionalExtensions;
 using Domain;
-using Domain.AggregatesModel.AccountAggregate;
+using Domain.AggregatesModel.UserAggregate;
 using Domain.Model;
 using FluentValidation;
 using Infrastructure.Seedwork;
@@ -18,24 +18,24 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Api.Features.Account
+namespace Api.Features.User
 {
-    public class UpdateAccountCommand : IRequest<Result<UpdatedAccountDto, CommandErrorResponse>>
+    public class UpdateUserCommand : IRequest<Result<UpdatedUserDto, CommandErrorResponse>>
     {
-        public string AccountId { get; }
+        public string UserId { get; }
         public string FullName { get; }
         public string Email { get; }
         public List<UpdateAttachment> ProfilePictures { get; }
         public DateTime ModifiedUTCDateTime { get; }
 
-        public UpdateAccountCommand(
-            string accountId,
+        public UpdateUserCommand(
+            string userId,
             string fullName,
             string email,
             List<UpdateAttachment> profilePictures,
             DateTime modifiedUTCDateTime)
         {
-            AccountId = accountId;
+            UserId = userId;
             FullName = fullName;
             Email = email;
             ProfilePictures = profilePictures;
@@ -43,20 +43,20 @@ namespace Api.Features.Account
         }
     }
 
-    public class UpdatedAccountDto
+    public class UpdatedUserDto
     {
-        public string AccountId { get; }
+        public string UserId { get; }
 
-        public UpdatedAccountDto(
-            string accountId)
+        public UpdatedUserDto(
+            string userId)
         {
-            AccountId = accountId;
+            UserId = userId;
         }
     }
 
-    public class UpdateAccountCommandValidator : AbstractValidator<UpdateAccountCommand>
+    public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     {
-        public UpdateAccountCommandValidator()
+        public UpdateUserCommandValidator()
         {
             RuleFor(a => a.FullName).NotEmpty();
             RuleFor(a => a.Email).NotEmpty();
@@ -64,39 +64,39 @@ namespace Api.Features.Account
         }
     }
 
-    public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, Result<UpdatedAccountDto, CommandErrorResponse>>
+    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result<UpdatedUserDto, CommandErrorResponse>>
     {
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAccountRepository _accountRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IAesSecurity _aes;
         private readonly DirectoryPathConfigurationOptions _directoryPathConfiguration;
 
-        public UpdateAccountCommandHandler(
-            ILogger<UpdateAccountCommandHandler> logger,
+        public UpdateUserCommandHandler(
+            ILogger<UpdateUserCommandHandler> logger,
             IUnitOfWork unitOfWork,
             IAesSecurity aes,
             IOptions<DirectoryPathConfigurationOptions> directoryPathConfiguration,
-            IAccountRepository accountRepository)
+            IUserRepository userRepository)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _aes = aes;
             _directoryPathConfiguration = directoryPathConfiguration.Value;
-            _accountRepository = accountRepository;
+            _userRepository = userRepository;
         }
 
-        public async Task<Result<UpdatedAccountDto, CommandErrorResponse>> Handle(UpdateAccountCommand request, CancellationToken cancellationToken)
+        public async Task<Result<UpdatedUserDto, CommandErrorResponse>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var account = await _accountRepository.GetAccount(accountId: request.AccountId);
+                var user = await _userRepository.GetUser(userId: request.UserId);
 
-                if (account == null)
-                    return ResultYm.NotFound<UpdatedAccountDto>("Product not found.");
+                if (user == null)
+                    return ResultYm.NotFound<UpdatedUserDto>("Product not found.");
 
-                if (!request.ModifiedUTCDateTime.Equals(account.ModifiedUTCDateTime))
-                    return ResultYm.Error<UpdatedAccountDto>(CommandErrorResponse.BusinessError(BusinessError.ConcurrencyUpdate.Error()));
+                if (!request.ModifiedUTCDateTime.Equals(user.ModifiedUTCDateTime))
+                    return ResultYm.Error<UpdatedUserDto>(CommandErrorResponse.BusinessError(BusinessError.ConcurrencyUpdate.Error()));
 
                 var valid = true;
 
@@ -114,13 +114,13 @@ namespace Api.Features.Account
                 }
 
                 if (!valid)
-                    return ResultYm.Error<UpdatedAccountDto>(CommandErrorResponse.BusinessError(BusinessError.FailToUpdateAccount__InvalidFileType.Error()));
+                    return ResultYm.Error<UpdatedUserDto>(CommandErrorResponse.BusinessError(BusinessError.FailToUpdateUser__InvalidFileType.Error()));
 
                 List<Attachment> profilePictures = new List<Attachment>();
 
                 request.ProfilePictures.ForEach(async delegate (UpdateAttachment attachment)
                 {
-                    var profilePicture = account.ProfilePictures != null ? account.ProfilePictures.FirstOrDefault(p => p.AttachmentId.Equals(attachment.AttachmentId)) : null;
+                    var profilePicture = user.ProfilePictures != null ? user.ProfilePictures.FirstOrDefault(p => p.AttachmentId.Equals(attachment.AttachmentId)) : null;
 
                     if (profilePicture == null)
                     {
@@ -142,27 +142,27 @@ namespace Api.Features.Account
                     
                 });
 
-                account.UpdateAccountDetails(
-                    new Domain.AggregatesModel.AccountAggregate.Account(
+                user.UpdateUserDetails(
+                    new Domain.AggregatesModel.UserAggregate.User(
                         fullName: request.FullName,
                         email: _aes.Encrypt(request.Email),
                         profilePictures: profilePictures
                     )
                 );
 
-                await _accountRepository.UpdateAccount(
-                    account: account,
-                    user: ("System", "System"),
-                    accountId: request.AccountId);
+                await _userRepository.UpdateUser(
+                    user: user,
+                    currentUser: ("System", "System"),
+                    userId: request.UserId);
 
                 await _unitOfWork.Commit();
 
-                return ResultYm.Success(new UpdatedAccountDto(account.AccountId));
+                return ResultYm.Success(new UpdatedUserDto(user.UserId));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unknown error has occured while trying to update account details.");
-                return ResultYm.Error<UpdatedAccountDto>(ex);
+                _logger.LogError(ex, "An unknown error has occured while trying to update user details.");
+                return ResultYm.Error<UpdatedUserDto>(ex);
             }
         }
 
