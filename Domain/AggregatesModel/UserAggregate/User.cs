@@ -8,6 +8,7 @@ namespace Domain.AggregatesModel.UserAggregate
     public class User : AuditableEntity, IAggregateRoot
     {
         public string UserId { get; private set; }
+        public string UserName { get; private set; }
         public string FullName { get; private set; }
         public string Password { get; private set; }
         public string Email { get; private set; }
@@ -16,6 +17,7 @@ namespace Domain.AggregatesModel.UserAggregate
         public User(
             string fullName,
             string email,
+            string userName = null,
             List<Attachment> profilePictures = null,
             string userId = null,
             string password = null,
@@ -34,6 +36,7 @@ namespace Domain.AggregatesModel.UserAggregate
                   modifiedUTCDateTime: modifiedUTCDateTime)
         {
             UserId = userId;
+            UserName = userName;
             FullName = fullName;
             Password = password;
             Email = email;
@@ -42,6 +45,7 @@ namespace Domain.AggregatesModel.UserAggregate
 
         public void UpdateUserDetails(User user)
         {
+            UserName = user.UserName;
             FullName = user.FullName;
             Email = user.Email;
             ProfilePictures = user.ProfilePictures;

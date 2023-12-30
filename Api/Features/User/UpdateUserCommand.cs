@@ -93,7 +93,7 @@ namespace Api.Features.User
                 var user = await _userRepository.GetUser(userId: request.UserId);
 
                 if (user == null)
-                    return ResultYm.NotFound<UpdatedUserDto>("Product not found.");
+                    return ResultYm.NotFound<UpdatedUserDto>("User not found.");
 
                 if (!request.ModifiedUTCDateTime.Equals(user.ModifiedUTCDateTime))
                     return ResultYm.Error<UpdatedUserDto>(CommandErrorResponse.BusinessError(BusinessError.ConcurrencyUpdate.Error()));

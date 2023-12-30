@@ -23,14 +23,6 @@ namespace Api.Features.User
             _mediator = mediator;
         }
 
-        [HttpPost]
-        [Route("")]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.Accepted)]
-        public async Task<IActionResult> AddUser([FromBody] AddUserCommand command)
-        {
-            return this.OkOrError(await _mediator.Send(command));
-        }
-
         [HttpGet]
         [Route("")]
         [ProducesResponseType(typeof(UserDto[]), (int)HttpStatusCode.Accepted)]
